@@ -75,7 +75,8 @@ jobs:
       baseDataVolumeUrl: "docker://{{.VM_IMAGE}}"
       storageClassName: {{ .storageClassName }}
       baseDataVolumeSize: {{ $rootVolumeSizeStr }}
-      accessMode: {{ .skipMigrationJob | ternary "ReadWriteOnce" "ReadWriteMany"}}
+      usePopulator: {{ .usePopulator }}
+      accessMode: {{ if .usePopulator }}{{ .skipMigrationJob | ternary "ReadWriteOnce" "ReadWriteMany" }}{{ else }}ReadWriteMany{{ end }}
     waitOptions:
       customStatusPaths:
       - key: '(.conditions.[] | select(.type == "Ready")).status'
@@ -181,6 +182,7 @@ jobs:
       storageClassName: {{ .storageClassName }}
       namespace: {{ $nsName }}
       useBaseImage: {{ .useBaseImage }}
+      usePopulator: {{ .usePopulator }}
       vmLabels:
         {{ $jobCounterLabelKey }}: {{ $jobCounterLabelValue }}
       rootVolumeLabels:
@@ -196,7 +198,7 @@ jobs:
       {{ range .dataVolumeCounters }}
       - {{ . }}
       {{ end }}
-      accessMode: {{ .skipMigrationJob | ternary "ReadWriteOnce" "ReadWriteMany"}}
+      accessMode: {{ if .usePopulator }}{{ .skipMigrationJob | ternary "ReadWriteOnce" "ReadWriteMany" }}{{ else }}ReadWriteMany{{ end }}
       NODE_SELECTOR: {{ .NODE_SELECTOR }}
 
 {{ if not .skipResizeJob }}
