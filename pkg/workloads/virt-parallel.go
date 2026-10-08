@@ -136,6 +136,9 @@ func NewVirtParallel(wh *workloads.WorkloadHelper) *cobra.Command {
 			}
 			AdditionalVars["usePopulator"] = usePopulator
 			log.Infof("CDI VolumeImportSource populator registered: %t", usePopulator)
+			if !usePopulator && skipMigrationJob {
+				log.Fatalf("virt-parallel: legacy CDI imports require ReadWriteMany; --skip-migration-job selects ReadWriteOnce, so use a ReadWriteMany-capable storage class and omit --skip-migration-job")
+			}
 
 		},
 		Run: func(cmd *cobra.Command, args []string) {

@@ -76,8 +76,7 @@ jobs:
       storageClassName: {{ .storageClassName }}
       baseDataVolumeSize: {{ $rootVolumeSizeStr }}
       usePopulator: {{ .usePopulator }}
-      # Legacy CDI importers on CNV 4.x require RWX for the importer volume.
-      accessMode: {{ if .usePopulator }}{{ .skipMigrationJob | ternary "ReadWriteOnce" "ReadWriteMany" }}{{ else }}ReadWriteMany{{ end }}
+      accessMode: {{ .skipMigrationJob | ternary "ReadWriteOnce" "ReadWriteMany" }}
     waitOptions:
       customStatusPaths:
       - key: '(.conditions.[] | select(.type == "Ready")).status'
@@ -199,8 +198,7 @@ jobs:
       {{ range .dataVolumeCounters }}
       - {{ . }}
       {{ end }}
-      # Legacy CDI importers on CNV 4.x require RWX for the importer volume.
-      accessMode: {{ if .usePopulator }}{{ .skipMigrationJob | ternary "ReadWriteOnce" "ReadWriteMany" }}{{ else }}ReadWriteMany{{ end }}
+      accessMode: {{ .skipMigrationJob | ternary "ReadWriteOnce" "ReadWriteMany" }}
       NODE_SELECTOR: {{ .NODE_SELECTOR }}
 
 {{ if not .skipResizeJob }}
