@@ -51,10 +51,10 @@ var volumePopulatorGVR = schema.GroupVersionResource{
 
 func hasVolumeImportSourcePopulator(ctx context.Context, client dynamic.Interface) (bool, error) {
 	list, err := client.Resource(volumePopulatorGVR).List(ctx, metav1.ListOptions{})
-	if apierrors.IsNotFound(err) {
-		return false, nil
-	}
 	if err != nil {
+		if apierrors.IsNotFound(err) {
+			return false, nil
+		}
 		return false, err
 	}
 	for _, item := range list.Items {
